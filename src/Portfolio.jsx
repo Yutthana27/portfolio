@@ -462,6 +462,11 @@ html,body,#root{margin:0;padding:0;min-height:100%;}
   .yp-burger{display:grid;}
   .yp-tools{margin-left:auto;}
   .yp-wordmark{display:none;}
+  /* With the wordmark gone the badge is all that is left at the rounded end
+     of the pill, so it needs the icon buttons' size and the same 8px inset
+     the CTA has on the other end. Otherwise it reads as small and off-centre. */
+  .yp-nav{padding:8px;}
+  .yp-badge{width:34px;height:34px;border-radius:11px;font-size:11.5px;}
   .yp-hero{padding:104px 0 84px;}
   .yp-sec{padding:70px 0;}
   .yp-stage{width:100%;}
