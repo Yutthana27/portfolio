@@ -174,7 +174,7 @@ function img(src) {
   return (typeof IMAGES !== "undefined" && IMAGES[src]) || src;
 }
 
-const PORTRAIT = "/portrait.webp";
+const PORTRAIT = "/portrait-framed.webp";
 
 /* ================================================================== */
 
@@ -292,15 +292,20 @@ html,body,#root{margin:0;padding:0;min-height:100%;}
   animation:blink 1.05s steps(1) infinite;}
 @keyframes blink{50%{opacity:0;}}
 .yp-blurb{margin:26px 0 0;max-width:62ch;font-size:clamp(14px,1.2vw,16px);color:var(--muted);}
-.yp-portrait{position:relative;justify-self:end;width:100%;max-width:460px;
-  aspect-ratio:.88;clip-path:url(#yp-portrait-clip);transform:translateY(-48px);}
-.yp-blob{position:absolute;left:1%;right:1%;top:17%;bottom:12%;z-index:0;
-  clip-path:url(#yp-blob-clip);
-  background:linear-gradient(135deg, #a0a0a5 0%, #5a5a60 100%);}
-.yp-portrait img{position:absolute;z-index:1;left:50%;bottom:-15%;width:90%;
-  transform:translateX(-50%);
-  filter:drop-shadow(0 14px 20px rgba(0,0,0,.28));
-  display:block;}
+/* The blob backdrop, the clip silhouette and the drop shadow used to be
+   composed here at runtime over a transparent cut-out of the portrait. They
+   are now baked into portrait-framed.webp itself (924x1050, alpha kept for the
+   head that sits above the blob), so the only file the browser fetches is the
+   framed version rather than a clean cut-out worth lifting. */
+.yp-portrait{justify-self:end;width:100%;max-width:460px;
+  transform:translateY(-48px);}
+.yp-portrait img{display:block;width:100%;height:auto;
+  /* Long press on iOS must not target the image, or Safari offers "Save to
+     Photos" and a full-bleed preview; the callout and drag rules cover the
+     desktop equivalents. Only this one image — project shots and logos
+     stay saveable. */
+  pointer-events:none;-webkit-touch-callout:none;-webkit-user-drag:none;
+  user-select:none;-webkit-user-select:none;}
 
 /* ---------- sections ---------- */
 .yp-sec{padding:96px 0;}
@@ -827,31 +832,6 @@ export default function Portfolio() {
         Skip to content
       </a>
 
-      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
-        <defs>
-          <clipPath id="yp-blob-clip" clipPathUnits="objectBoundingBox">
-            <path d="M 0.0894,0.1539 C 0.1751,0.0693 0.4621,0.0083 0.6011,0.0393
-              C 0.7401,0.0703 0.9394,0.2317 0.9672,0.3496
-              C 0.9951,0.4675 0.8903,0.6868 0.7769,0.7842
-              C 0.6635,0.8816 0.3646,0.9979 0.2511,0.9646
-              C 0.1375,0.9313 0.0853,0.702 0.0597,0.5736
-              C 0.0341,0.4453 0.0037,0.2385 0.0894,0.1539 Z" />
-          </clipPath>
-          {/* Same silhouette as yp-blob-clip, but rescaled to sit inside the
-              lower 90% of the taller .yp-portrait box, unioned with an open
-              rectangle above it so the head is never clipped while the
-              shoulders still follow the frame's outline. */}
-          <clipPath id="yp-portrait-clip" clipPathUnits="objectBoundingBox">
-            <rect x="0" y="0" width="1" height="0.32" />
-            <path d="M 0.0976,0.2793 C 0.1816,0.2192 0.4629,0.1759 0.5991,0.1979
-              C 0.7353,0.2199 0.9306,0.3345 0.9579,0.4182
-              C 0.9852,0.5019 0.8825,0.6576 0.7714,0.7268
-              C 0.6602,0.7959 0.3673,0.8785 0.2561,0.8549
-              C 0.1448,0.8312 0.0936,0.6684 0.0685,0.5773
-              C 0.0434,0.4862 0.0136,0.3393 0.0976,0.2793 Z" />
-          </clipPath>
-        </defs>
-      </svg>
 
       <div className="yp-bg" aria-hidden="true">
         <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
@@ -937,8 +917,8 @@ export default function Portfolio() {
               </p>
             </div>
             <div className="yp-portrait">
-              <div className="yp-blob" aria-hidden="true" />
-              <img src={PORTRAIT} alt={ME.name} />
+              <img src={PORTRAIT} alt={ME.name} width={924} height={1050}
+                draggable={false} />
             </div>
           </div>
         </section>
