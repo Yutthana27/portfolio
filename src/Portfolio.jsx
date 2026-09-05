@@ -397,11 +397,15 @@ html,body,#root{margin:0;padding:0;min-height:100%;}
 
 .yp-eduitem + .yp-eduitem{margin-top:30px;padding-top:28px;border-top:1px solid var(--line);}
 .yp-eduitem + .yp-eduitem h3{font-size:18px;}
+/* Logo size and the gap beside it live as variables so the GPAX block can
+   line itself up with the text without repeating the numbers. */
+.yp-eduitem{--logo:78px;--logogap:20px;}
+.yp-eduitem + .yp-eduitem{--logo:62px;}
 .yp-edu{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;}
-.yp-eduhead{display:flex;align-items:flex-start;gap:20px;min-width:0;}
-.yp-logo{width:78px;height:78px;object-fit:contain;flex-shrink:0;padding:10px;margin-top:2px;
+.yp-eduhead{display:flex;align-items:flex-start;gap:var(--logogap);min-width:0;}
+.yp-logo{width:var(--logo);height:var(--logo);object-fit:contain;flex-shrink:0;padding:10px;margin-top:2px;
   border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.85);}
-.yp-eduitem + .yp-eduitem .yp-logo{width:62px;height:62px;padding:8px;}
+.yp-eduitem + .yp-eduitem .yp-logo{padding:8px;}
 .yp-edu h3{margin:0;font-size:21px;line-height:1.25;font-weight:600;letter-spacing:-.02em;}
 .yp-edu p{margin:6px 0 0;color:var(--muted);}
 .yp-when{font-family:var(--mono);font-size:12.5px;color:var(--muted);opacity:.72;}
@@ -441,10 +445,19 @@ html,body,#root{margin:0;padding:0;min-height:100%;}
   .yp-item{grid-template-columns:34px minmax(0,1fr);}
   .yp-meta{grid-column:2;}
   .yp-cgrid{grid-template-columns:1fr;gap:40px;}
-  .yp-gpa{align-items:flex-start;}
+  /* On a narrow screen the school name is wide enough that GPAX wraps for one
+     entry but not the other. Stack both the same way instead. */
+  .yp-edu{flex-direction:column;align-items:flex-start;gap:14px;}
+  .yp-gpa{align-items:flex-start;padding-left:calc(var(--logo) + var(--logogap));}
   .yp-skillslayout{grid-template-columns:1fr;}
+  /* The tile columns are a fixed width, so once the mosaic spans the full
+     width it needs centering rather than sitting against the left edge. */
+  .yp-iconmosaic{justify-content:center;}
 }
 @media (max-width:680px){
+  /* Two text columns inside a phone-width card leave each one too narrow,
+     so every second item wraps mid-phrase. */
+  .yp-cell ul{columns:1;}
   .yp-links{display:none;}
   .yp-burger{display:grid;}
   .yp-tools{margin-left:auto;}
